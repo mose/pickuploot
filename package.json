@@ -2,6 +2,7 @@
   "name": "pickuploot",
   "description": "Just an express sandbox",
   "version": "0.0.1",
+  "private": "true",
   "scripts": {
     "start": "node app"
   },
@@ -10,7 +11,9 @@
     "passport": "0.1.x",
     "passport-twitter": "0.1.x",
     "passport-facebook": "0.1.x",
-    "jade": "*"
+    "jade": "*",
+    "nib": "*",
+    "stylus": "*"
     },
   "engines": {
     "node": ">= 0.8.16",
