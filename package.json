@@ -13,7 +13,8 @@
     "passport-facebook": "0.1.x",
     "jade": "*",
     "nib": "*",
-    "stylus": "*"
+    "stylus": "*",
+    "connect-flash": "*"
     },
   "engines": {
     "node": ">= 0.8.16",

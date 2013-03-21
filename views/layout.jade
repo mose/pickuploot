@@ -1,7 +1,7 @@
 !!!5
 html
   head
-    title #{title}
+    title= title
     link(rel='stylesheet', href='/css/style.css')
   body
     header
@@ -9,6 +9,8 @@ html
     nav
       block side
     .container
+      - if (message || error)
+        .alert= message
       .content
         block content
     footer
