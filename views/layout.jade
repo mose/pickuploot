@@ -5,14 +5,17 @@ html
     link(rel='stylesheet', href='/css/style.css')
   body
     header
-      h1 #{title}
       .right
         - if (user)
-          You are #{user.name}
+          .x logged as #{user.username}
+          .x
+            a(href="/logout") (Logout)
+          .up
+            block side
         - else
           a(href="/auth/github") Login with GitHub
-    nav
-      block side
+      h1
+        a(href="/") #{title}
     .container
       - if (message)
         .alert #{message}

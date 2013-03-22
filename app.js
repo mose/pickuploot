@@ -6,13 +6,13 @@
 var express = require('express')
   , http = require('http')
   , passport = require('passport')
-  , GithubStrategy = require('passport-github').Strategy
   , flash = require('connect-flash')
   , config = require('./config.json')
   , stylus = require("stylus")
   , nib = require("nib")
   , fs = require("fs")
-  , path = require('path');
+  , path = require('path')
+  , GitHubStrategy = require('passport-github').Strategy;
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -22,12 +22,21 @@ passport.deserializeUser(function(obj, done) {
   done(null, obj);
 });
 
+passport.use(
+  new GitHubStrategy(config.auth.github,
+  function(accessToken, refreshToken, profile, done) {
+    process.nextTick(function () {
+      return done(null, profile);
+    });
+  }
+));
+
 var app = express();
 
 function compile(str, path) {
   return stylus(str)
     .set('filename', path)
-    .use(nib())
+    .use(nib());
 }
 
 app.configure(function(){
@@ -38,7 +47,7 @@ app.configure(function(){
   app.set('updir',path.join(__dirname, 'public','up'));
   app.use(express.favicon());
   app.use(express.cookieParser('keyboard cat'));
-  app.use(express.session({ cookie: { maxAge: 60000 }}));
+  app.use(express.session());
   app.use(flash());
   app.use(express.logger('dev'));
   app.use(express.bodyParser());
@@ -51,14 +60,6 @@ app.configure(function(){
   ));
   app.use(passport.initialize());
   app.use(passport.session());
-  app.use(
-    new GithubStrategy(config.auth.github),
-    function(accessToken, refreshToken, profile, done) {
-      process.nextTick(function () {
-        return done(null, profile);
-      });
-    }
-  );
 
 });
 
@@ -72,8 +73,9 @@ app.get('/', function(req, res){
     if (err) {
       req.flash('error',err);
     }
+    console.log(req.user);
     res.render('index.jade', {
-      title: 'Home',
+      title: app.get('title'),
       message: req.flash('info'),
       error: req.flash('error'),
       files: files,
@@ -84,7 +86,6 @@ app.get('/', function(req, res){
 });
 
 app.post('/', function(req, res){
-  logger(req);
   var img = req.files.img;
   if (img && img.type.indexOf("image/") != -1) {
     fs.rename(img.path, path.join(app.get('updir'),img.name), function (err) {
