@@ -18,10 +18,10 @@ html
       h1
         a(href="/") #{title}
     .container
-      - if (message)
-        .alert #{message}
-      - if (error)
-        .alert #{error}
+      - if (message.length)
+        .message #{message}
+      - if (error.length)
+        .error #{error}
       .content
         block content
     footer

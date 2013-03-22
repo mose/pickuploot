@@ -44,8 +44,17 @@ header .menu h3 {
 header .menu form {
   display: inline-block;
 }
+.message {
+  padding: 10px 20px;
+  background-color: #666;
+  color: #fff;
+}
+.error {
+  padding: 10px 20px;
+  background-color: #000;
+  color: #f90;
+}
 .container {
-  display: inline-block;
 }
 .content {
   padding: 5px;
