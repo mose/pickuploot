@@ -1,4 +1,4 @@
-var getByClass = function(className, parent=document) {
+var getByClass = function(className, parent) {
   parent || (parent = document);
   var descendants = parent.getElementsByTagName("*"), i=-1, e, result=[];
   while (e = descendants[++i]) {
