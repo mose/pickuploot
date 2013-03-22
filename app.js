@@ -74,12 +74,19 @@ app.get('/', function(req, res){
 app.post('/', function(req, res){
   if (req.user) {
     var img = req.files.img;
-    fs.rename(img.path, path.join(app.get('updir'),req.user.username+"-"+img.name.replace(/\.\./g,'')), function(err){
-      if (err) throw err;
-      req.flash('message',"Image uploaded.");
-      res.redirect('/');
+    fs.exists(img.path, function (exists) {
+      if (exists) {
+        path = img.path;
+      } else {
+        path = "/tmp"+img.path;
+      }
+      fs.rename(img.path, path.join(app.get('updir'),req.user.username+"-"+img.name.replace(/\.\./g,'')), function(err){
+        if (err) console.log(err);
+        req.flash('message',"Image uploaded.");
+      });
     });
   }
+  res.redirect('/');
   /* enable if you get canvas
   if (req.user) {
     var img = req.files.img;
