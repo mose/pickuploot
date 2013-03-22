@@ -6,6 +6,11 @@ html
   body
     header
       h1 #{title}
+      .right
+        - if (user)
+          You are #{user.name}
+        - else
+          a(href="/auth/github") Login with GitHub
     nav
       block side
     .container

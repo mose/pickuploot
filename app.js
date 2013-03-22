@@ -6,12 +6,21 @@
 var express = require('express')
   , http = require('http')
   , passport = require('passport')
+  , GithubStrategy = require('passport-github').Strategy
   , flash = require('connect-flash')
   , config = require('./config.json')
   , stylus = require("stylus")
   , nib = require("nib")
   , fs = require("fs")
   , path = require('path');
+
+passport.serializeUser(function(user, done) {
+  done(null, user);
+});
+
+passport.deserializeUser(function(obj, done) {
+  done(null, obj);
+});
 
 var app = express();
 
@@ -40,6 +49,16 @@ app.configure(function(){
     , compile: compile
     }
   ));
+  app.use(passport.initialize());
+  app.use(passport.session());
+  app.use(
+    new GithubStrategy(config.auth.github),
+    function(accessToken, refreshToken, profile, done) {
+      process.nextTick(function () {
+        return done(null, profile);
+      });
+    }
+  );
 
 });
 
@@ -57,9 +76,10 @@ app.get('/', function(req, res){
       title: 'Home',
       message: req.flash('info'),
       error: req.flash('error'),
-      files: files
+      files: files,
+      user: req.user
     });
-    
+
   });
 });
 
@@ -76,17 +96,22 @@ app.post('/', function(req, res){
   res.redirect('/');
 });
 
-app.post('/login',
-  passport.authenticate('local', {
+app.get('/auth/github',
+  passport.authenticate('github', {
     successRedirect: '/',
     failureRedirect: '/',
     failureFlash: 'Invalid username or password.',
     successFlash: 'Welcome!'
   })
 );
+app.get('/auth/github/callback',
+  passport.authenticate('github', { failureRedirect: '/login' }),
+  function(req, res) {
+    res.redirect('/');
+  });
 
 app.get('/logout', function(req, res) {
-  delete req.session.username;
+  req.logout();
   res.redirect('/');
 });
 
