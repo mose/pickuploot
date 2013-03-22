@@ -5,10 +5,12 @@ var express = require('express')
   , config = require('./config.json')
   , fs = require("fs")
   , path = require('path')
-  , Canvas = require("canvas")
-  , Image = Canvas.Image
   , GitHubStrategy = require('passport-github').Strategy;
 
+/* enable if you can install canvas, it just fails on nodester
+var Canvas = require("canvas")
+  , Image = Canvas.Image;
+*/
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -72,6 +74,15 @@ app.get('/', function(req, res){
 app.post('/', function(req, res){
   if (req.user) {
     var img = req.files.img;
+    fs.rename(img.path, path.join(app.get('updir'),req.user.username+"-"+img.name.replace(/\.\./g,'')), function(err){
+      if (err) throw err;
+      req.flash('message',"Image uploaded.");
+      res.redirect('/');
+    });
+  }
+  /* enable if you get canvas
+  if (req.user) {
+    var img = req.files.img;
     if (img && img.type.indexOf("image/") != -1) {
       image = new Image;
       image.src = img.path;
@@ -83,12 +94,12 @@ app.post('/', function(req, res){
           console.log('Resized and saved');
         });
       });
-      req.flash('message',"Image uploaded.");
     } else {
       req.flash('error',err);
     }
   }
   res.redirect('/');
+  */
 });
 
 app.get('/del/:img', function(req, res){
