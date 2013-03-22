@@ -1,8 +1,3 @@
-
-/**
- * Module dependencies.
- */
-
 var express = require('express')
   , http = require('http')
   , passport = require('passport')
@@ -73,7 +68,6 @@ app.get('/', function(req, res){
     if (err) {
       req.flash('error',err);
     }
-    console.log(req.user);
     res.render('index.jade', {
       title: app.get('title'),
       message: req.flash('info'),
