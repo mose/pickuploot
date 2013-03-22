@@ -21,7 +21,7 @@ header {
   padding: 10px 20px;
   background-color: #222;
   color: #fff;
-  text-shadow: 0 0 30px #fff;
+  text-shadow: 0 0 20px #9cf;
 }
 header h1 a {
   color: #fff;
@@ -31,6 +31,7 @@ header .up {
 }
 header .right {
   float: right;
+  padding: 5px 0;
 }
 header .right .x {
   display: inline-block;
