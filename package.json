@@ -11,9 +11,9 @@
     "passport": "0.1.x",
     "passport-github": "*",
     "jade": "*",
-    "nib": "*",
-    "stylus": "*",
-    "connect-flash": "*"
+    "connect-flash": "*",
+    "node-gyp": "*",
+    "canvas": "*"
     },
   "engines": {
     "node": ">= 0.8.16",

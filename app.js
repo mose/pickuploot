@@ -3,11 +3,12 @@ var express = require('express')
   , passport = require('passport')
   , flash = require('connect-flash')
   , config = require('./config.json')
-  , stylus = require("stylus")
-  , nib = require("nib")
   , fs = require("fs")
   , path = require('path')
+  , canvas = require("canvas")
+  , Image = Canvas.Image
   , GitHubStrategy = require('passport-github').Strategy;
+
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -28,12 +29,6 @@ passport.use(
 
 var app = express();
 
-function compile(str, path) {
-  return stylus(str)
-    .set('filename', path)
-    .use(nib());
-}
-
 app.configure(function(){
   app.set('port', process.env["app_port"] || 4000);
   app.set('views', __dirname + '/views');
@@ -48,11 +43,6 @@ app.configure(function(){
   app.use(express.bodyParser());
   app.use(express.methodOverride());
   app.use(express.static(path.join(__dirname, 'public')));
-  app.use(stylus.middleware(
-    { src: __dirname + '/public'
-    , compile: compile
-    }
-  ));
   app.use(passport.initialize());
   app.use(passport.session());
 
@@ -82,9 +72,17 @@ app.get('/', function(req, res){
 app.post('/', function(req, res){
   var img = req.files.img;
   if (img && img.type.indexOf("image/") != -1) {
-    fs.rename(img.path, path.join(app.get('updir'),img.name), function (err) {
-      req.flash('message',"Image uploaded.");
+    image = new Image;
+    image.src = img.path;
+    var canvas = new Canvas(200,200)
+      , context = canvas.getContext('2d');
+    context.drawImage(img, 0, 0, 200, 200);
+    canvas.toBuffer(function(err, buf){
+      fs.writeFile(path.join(app.get('updir'),img.name), buf, function(){
+        console.log('Resized and saved');
+      });
     });
+    req.flash('message',"Image uploaded.");
   } else {
     req.flash('error',err);
   }
