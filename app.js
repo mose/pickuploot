@@ -22,7 +22,7 @@ function compile(str, path) {
 }
 
 app.configure(function(){
-  app.set('port', process.env.PORT || 4000);
+  app.set('port', process.env["app_port"] || 4000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.set('title', 'Pickuploot');
@@ -59,7 +59,7 @@ app.get('/', function(req, res){
       error: req.flash('error'),
       files: files
     });
-    
+
   });
 });
 
