@@ -9,8 +9,10 @@ html
     nav
       block side
     .container
-      - if (message || error)
-        .alert= message
+      - if (message)
+        .alert #{message}
+      - if (error)
+        .alert #{error}
       .content
         block content
     footer

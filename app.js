@@ -10,6 +10,7 @@ var express = require('express')
   , config = require('./config.json')
   , stylus = require("stylus")
   , nib = require("nib")
+  , fs = require("fs")
   , path = require('path');
 
 var app = express();
@@ -25,6 +26,7 @@ app.configure(function(){
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.set('title', 'Pickuploot');
+  app.set('updir',path.join(__dirname, 'public','up'));
   app.use(express.favicon());
   app.use(express.cookieParser('keyboard cat'));
   app.use(express.session({ cookie: { maxAge: 60000 }}));
@@ -47,14 +49,30 @@ app.configure('development', function(){
 });
 
 app.get('/', function(req, res){
-  res.render('index.jade', {
-    title: 'Home',
-    message: req.flash('info'),
-    error: req.flash('error')
+  fs.readdir(app.get('updir'), function (err, files) {
+    if (err) {
+      req.flash('error',err);
+    }
+    res.render('index.jade', {
+      title: 'Home',
+      message: req.flash('info'),
+      error: req.flash('error'),
+      files: files
+    });
+    
   });
 });
 
 app.post('/', function(req, res){
+  logger(req);
+  var img = req.files.img;
+  if (img && img.type.indexOf("image/") != -1) {
+    fs.rename(img.path, path.join(app.get('updir'),img.name), function (err) {
+      req.flash('message',"Image uploaded.");
+    });
+  } else {
+    req.flash('error',err);
+  }
   res.redirect('/');
 });
 

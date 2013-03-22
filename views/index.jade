@@ -1,10 +1,12 @@
 extend layout
 
 block content
-  p content to come
+  - each img in files
+    img(src="up/#{img}") 
 
 block side
   .menu
     h3 Upload
-    form
-      input
+    form(method="post",enctype="multipart/form-data")
+      input(type="file", name="img")
+      input(type="submit", value="Upload")
