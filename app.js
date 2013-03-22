@@ -76,19 +76,34 @@ app.post('/', function(req, res){
     if (img && img.type.indexOf("image/") != -1) {
       image = new Image;
       image.src = img.path;
+      proportion = image.height / image.width;
+      if (proportion > 1) {
+        h = 200 * proportion;
+        w = 200;
+        offset_h = - (h - 200) / 2;
+        offset_w = 0
+      } else {
+        h = 200;
+        w = 200 / proportion;
+        offset_h = 0;
+        offset_w = - (w - 200) / 2;
+      }
       var canvas = new Canvas(200,200)
         , context = canvas.getContext('2d');
-      context.drawImage(image, 0, 0, 200, 200);
+      context.drawImage(image, offset_w, offset_h, w, h);
       canvas.toBuffer(function(err, buf){
         fs.writeFile(path.join(app.get('updir'),req.user.username+"-"+img.name.replace(/\.\./g,'')), buf, function(){
           console.log('Resized and saved');
+          res.redirect('/');
         });
       });
     } else {
-      req.flash('error',err);
+      req.flash('error',"improper format");
+      res.redirect('/');
     }
+  } else {
+    res.redirect('/');
   }
-  res.redirect('/');
 });
 
 app.get('/del/:img', function(req, res){
