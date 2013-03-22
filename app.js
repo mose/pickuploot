@@ -76,11 +76,11 @@ app.post('/', function(req, res){
     var img = req.files.img;
     fs.exists(img.path, function (exists) {
       if (exists) {
-        path = img.path;
+        p = img.path;
       } else {
-        path = "/tmp"+img.path;
+        p = "/tmp"+img.path;
       }
-      fs.rename(img.path, path.join(app.get('updir'),req.user.username+"-"+img.name.replace(/\.\./g,'')), function(err){
+      fs.rename(p, path.join(app.get('updir'),req.user.username+"-"+img.name.replace(/\.\./g,'')), function(err){
         if (err) console.log(err);
         req.flash('message',"Image uploaded.");
       });
