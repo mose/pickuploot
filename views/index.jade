@@ -2,8 +2,11 @@ extend layout
 
 block content
   - each img in files
-    a(href="/del/#{img}")
-      img(src="up/#{img}",title="#{img}")
+    .img
+      - if (user)
+        a(href="/del/#{img}",class="delete")
+          img(src="images/delete.png",title="Delete")
+      img(src="up/#{img}",alt="#{img}",title="#{img}")
 
 block side
   .menu
