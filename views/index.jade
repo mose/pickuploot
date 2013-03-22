@@ -2,7 +2,8 @@ extend layout
 
 block content
   - each img in files
-    img(src="up/#{img}")
+    a(href="/del/#{img}")
+      img(src="up/#{img}",title="#{img}")
 
 block side
   .menu

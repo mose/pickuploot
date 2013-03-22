@@ -5,7 +5,7 @@ var express = require('express')
   , config = require('./config.json')
   , fs = require("fs")
   , path = require('path')
-  , canvas = require("canvas")
+  , Canvas = require("canvas")
   , Image = Canvas.Image
   , GitHubStrategy = require('passport-github').Strategy;
 
@@ -70,21 +70,33 @@ app.get('/', function(req, res){
 });
 
 app.post('/', function(req, res){
-  var img = req.files.img;
-  if (img && img.type.indexOf("image/") != -1) {
-    image = new Image;
-    image.src = img.path;
-    var canvas = new Canvas(200,200)
-      , context = canvas.getContext('2d');
-    context.drawImage(img, 0, 0, 200, 200);
-    canvas.toBuffer(function(err, buf){
-      fs.writeFile(path.join(app.get('updir'),img.name), buf, function(){
-        console.log('Resized and saved');
+  if (req.user) {
+    var img = req.files.img;
+    if (img && img.type.indexOf("image/") != -1) {
+      image = new Image;
+      image.src = img.path;
+      var canvas = new Canvas(200,200)
+        , context = canvas.getContext('2d');
+      context.drawImage(image, 0, 0, 200, 200);
+      canvas.toBuffer(function(err, buf){
+        fs.writeFile(path.join(app.get('updir'),req.user.username+"-"+img.name.replace(/\.\./g,'')), buf, function(){
+          console.log('Resized and saved');
+        });
       });
+      req.flash('message',"Image uploaded.");
+    } else {
+      req.flash('error',err);
+    }
+  }
+  res.redirect('/');
+});
+
+app.get('/del/:img', function(req, res){
+  if (req.user) {
+    sane = req.params.img.replace(/\.\./g,'');
+    fs.unlink(path.join(app.get('updir'),sane),function() {
+      console.log("erased "+sane);
     });
-    req.flash('message',"Image uploaded.");
-  } else {
-    req.flash('error',err);
   }
   res.redirect('/');
 });
