@@ -7,10 +7,9 @@ var express = require('express')
   , path = require('path')
   , GitHubStrategy = require('passport-github').Strategy;
 
-/* enable if you can install canvas, it just fails on nodester
 var Canvas = require("canvas")
   , Image = Canvas.Image;
-*/
+
 
 passport.serializeUser(function(user, done) {
   done(null, user);
@@ -74,22 +73,6 @@ app.get('/', function(req, res){
 app.post('/', function(req, res){
   if (req.user) {
     var img = req.files.img;
-    fs.exists(img.path, function (exists) {
-      if (exists) {
-        p = img.path;
-      } else {
-        p = "/tmp"+img.path;
-      }
-      fs.rename(p, path.join(app.get('updir'),req.user.username+"-"+img.name.replace(/\.\./g,'')), function(err){
-        if (err) console.log(err);
-        req.flash('message',"Image uploaded.");
-      });
-    });
-  }
-  res.redirect('/');
-  /* enable if you get canvas
-  if (req.user) {
-    var img = req.files.img;
     if (img && img.type.indexOf("image/") != -1) {
       image = new Image;
       image.src = img.path;
@@ -106,7 +89,6 @@ app.post('/', function(req, res){
     }
   }
   res.redirect('/');
-  */
 });
 
 app.get('/del/:img', function(req, res){
