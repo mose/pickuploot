@@ -1,9 +1,10 @@
 !!!5
-html
+html(id="drop")
   head
     title= title
     link(rel='stylesheet', href='css/style.css')
-    script(type="text/javascript",src="js/pickuploot.js")
+    - if (user)
+      script(type="text/javascript",src="js/pickuploot.js")
   body
     header
       .right

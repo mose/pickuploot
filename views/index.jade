@@ -7,6 +7,8 @@ block content
         a(href="/del/#{img}",class="delete")
           img(src="images/delete.png",title="Delete")
       img(src="up/#{img}",alt="#{img}",title="#{img}")
+  form(method="post",action="multi",enctype="multipart/form-data",id="multidnd")
+    input(type="file",id="multifile",name="multi[]",multiple="multiple")
 
 block side
   .menu
