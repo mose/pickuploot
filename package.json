@@ -1,6 +1,6 @@
 {
   "name": "pickuploot",
-  "description": "Just an express sandbox",
+  "description": "Simple express-based image uploader with simple github auth.",
   "version": "0.0.3",
   "private": "true",
   "scripts": {
