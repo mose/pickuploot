@@ -1,7 +1,9 @@
 Pickuploot
 ================
 
-This is an Expressjs sandbox for educational purpose.
+[![Dependency Status](https://gemnasium.com/mose/pickuploot.png)](https://gemnasium.com/mose/pickuploot)
+
+This is an Expressjs sandbox for educational purpose. see https://npmjs.org/package/pickuploot
 
 to test it, just
 
