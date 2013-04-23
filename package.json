@@ -2,7 +2,6 @@
   "name": "pickuploot",
   "description": "Simple express-based image uploader with simple github auth.",
   "version": "0.0.4",
-  "private": "false",
   "scripts": {
     "start": "node app"
   },
