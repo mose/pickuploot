@@ -28,10 +28,39 @@ passport.use(
   }
 ));
 
+var processimg = function(img,username) {
+  if (img && img.type.indexOf("image/") != -1) {
+    image = new Image;
+    image.src = img.path;
+    proportion = image.height / image.width;
+    if (proportion > 1) {
+      h = 200 * proportion;
+      w = 200;
+      offset_h = - (h - 200) / 2;
+      offset_w = 0
+    } else {
+      h = 200;
+      w = 200 / proportion;
+      offset_h = 0;
+      offset_w = - (w - 200) / 2;
+    }
+    var canvas = new Canvas(200,200)
+      , context = canvas.getContext('2d');
+    context.drawImage(image, offset_w, offset_h, w, h);
+    canvas.toBuffer(function(err, buf){
+      fs.writeFile(path.join(app.get('updir'),username+"-"+img.name.replace(/\.\./g,'')), buf, function(){
+        console.log('Resized and saved');
+        return true;
+      });
+    });
+  }
+  return false
+}
+
 var app = express();
 
 app.configure(function(){
-  app.set('port', process.env["app_port"] || 4000);
+  app.set('port', config.port || 4000);
   app.set('views', __dirname + '/views');
   app.set('view engine', 'jade');
   app.set('title', 'Pickuploot');
@@ -73,37 +102,33 @@ app.get('/', function(req, res){
 app.post('/', function(req, res){
   if (req.user) {
     var img = req.files.img;
-    if (img && img.type.indexOf("image/") != -1) {
-      image = new Image;
-      image.src = img.path;
-      proportion = image.height / image.width;
-      if (proportion > 1) {
-        h = 200 * proportion;
-        w = 200;
-        offset_h = - (h - 200) / 2;
-        offset_w = 0
-      } else {
-        h = 200;
-        w = 200 / proportion;
-        offset_h = 0;
-        offset_w = - (w - 200) / 2;
-      }
-      var canvas = new Canvas(200,200)
-        , context = canvas.getContext('2d');
-      context.drawImage(image, offset_w, offset_h, w, h);
-      canvas.toBuffer(function(err, buf){
-        fs.writeFile(path.join(app.get('updir'),req.user.username+"-"+img.name.replace(/\.\./g,'')), buf, function(){
-          console.log('Resized and saved');
-          res.redirect('/');
-        });
-      });
-    } else {
+    if (!processimg(img,req.user.username)) {
       req.flash('error',"improper format");
-      res.redirect('/');
     }
-  } else {
-    res.redirect('/');
   }
+  res.redirect('/');
+});
+
+app.post('/multi', function(req, res){
+  if (req.user) {
+    console.log(req.xhr);
+    if (req.xhr){
+      var fSize = req.header('x-file-size'),
+          fType = req.header('x-file-type'), 
+          basename = path.basename, 
+          fName = basename(req.header('x-file-name')), 
+          ws = fs.createWriteStream('./temp/'+fName);
+      req.on('data', function(data) { 
+        ws.write(data);
+      });
+    }
+    console.log(req.xhr);
+    var img = req.files.img;
+    if (!processimg(img,req.user.username)) {
+      req.flash('error',"improper format");
+    }
+  }
+  res.send('ok');
 });
 
 app.get('/del/:img', function(req, res){

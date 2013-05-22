@@ -8,5 +8,6 @@
   },
   "session" : {
     "secret" : "yourbestsecret"
-  }
+  },
+  "port" : "4000"
 }

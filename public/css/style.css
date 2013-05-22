@@ -71,6 +71,15 @@ header .menu form {
   top: 10px;
   right: 10px;
 }
+#multidnd {
+  display: none;
+}
+html.hover body {
+  background-color: #000;
+}
+html.hover footer, html.hover header  {
+  background-color: #000;
+}
 footer {
   padding: 0 20px;
   background-color: #222;
